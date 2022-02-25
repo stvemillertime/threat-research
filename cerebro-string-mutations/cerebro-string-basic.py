@@ -65,7 +65,7 @@ def doPrototype(proto, _strval):
     return ' '.join(v)
 
 def generateSmallStack(strval):
-    return '   $smallStack = {' + doPrototype('c645??{:02x}', strval) +'}'
+    return '   $smallStack = {' + doPrototype('c6(45|4424)??{:02x}', strval) +'}'
 
 def generateLargeStack(strval):
     return '   $largeStack = {' + doPrototype('c7(45|85)[1-4]{:02x}000000', strval) + '}'
