@@ -28,8 +28,7 @@ Usage:
 
 python3 cerebro-string-basic.py -s kernel32.dll -m frenchstack
 python3 cerebro-string-basic.py --str GetCurrentProcess --mut hex 
-python3 cerebro-string-basic.py -s IsDebuggerPresent --mut a
-ll
+python3 cerebro-string-basic.py -s IsDebuggerPresent --mut all
 
 '''
 
@@ -85,7 +84,7 @@ def generateDword(_strval):
     if remainder > 0:
         if remainder == 3:
             firstv, secondv = struct.unpack("<HB", strval[-remainder:])
-            print(firstv, secondv, "oops - something bad happened in generateDword")
+            print(firstv, secondv, "Oooops, something bad happened in generateDword, and yet we carry on:\n")
             #print(firstv, secondv,file=sys.stderr)
             values.append('[0-1]c7(45|85)[1-4]{:04x}'.format(firstv))
             values.append('[0-1]c6(45|85)[1-4]{:02x}'.format(secondv))
@@ -114,7 +113,7 @@ def fixName(strval):
         result.append('_' if s not in valid else s)
     return ''.join(result)
 
-def generate(strval):
+def make_frenchstack_strings(strval):
     nl = '\n'
     clauses = []
     clauses.append("rule stackstring_{}".format(fixName(strval)))
@@ -292,7 +291,7 @@ def main_active(args = sys.argv[1:]):
                     mutated_str = make_hex_encoded_strings(in_string)
                     assemble_output(clean_str,mut_type,mutated_str)
                 elif mutation == "frenchstack":
-                    generate(in_string) #thank you @notareverser!
+                    make_frenchstack_strings(in_string) #thank you @notareverser!
                 elif mutation == "all": #everything but frenchstack
                     funcs = [
                             make_flipflop_strings(in_string),
@@ -302,6 +301,7 @@ def main_active(args = sys.argv[1:]):
                             make_stackpush_strings(in_string),
                             make_stackpush_nullterm(in_string),
                             make_stackpush_doublenullterm(in_string)
+                            #,make_frenchstack_strings(in_string)
                     ]
                     mut_types = ["_flipflop","_reverse","_hex_enc_str","_fallchill","_stackpush","_stackpushnull","_stackpushdoublenull"]
                     i = 0
